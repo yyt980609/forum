@@ -1,4 +1,4 @@
-package settings
+package config
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ type AppConfig struct {
 	Name         string `mapstructure:"name"`
 	Version      string `mapstructure:"version"`
 	StartTime    string `mapstructure:"start_time"`
-	MachineID    int    `mapstructure:"machine_id"`
+	MachineID    int16  `mapstructure:"machine_id"`
 	*LogConfig   `mapstructure:"log"`
 	*MySQLConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`
@@ -48,13 +48,13 @@ type LogConfig struct {
 	MaxBackups int    `mapstructure:"max_backups"`
 }
 
-func Init() (err error) {
+func InitSettings() (err error) {
 	// 配置文件名称(无扩展名)
 	viper.SetConfigName("config")
 	// 如果配置文件的名称中没有扩展名，则需要配置此项
 	viper.SetConfigType("yaml")
 	// 在工作目录中查找配置
-	viper.AddConfigPath("./conf")
+	viper.AddConfigPath("./config")
 	// 查找并读取配置文件
 	err = viper.ReadInConfig()
 	// 处理读取配置文件的错误

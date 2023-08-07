@@ -3,7 +3,7 @@ package redis
 import (
 	"context"
 	"fmt"
-	"forum/settings"
+	"forum/config"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -11,7 +11,7 @@ import (
 var rdb *redis.Client
 var ctx = context.Background()
 
-func Init(cfg *settings.RedisConfig) (err error) {
+func Init(cfg *config.RedisConfig) (err error) {
 	rdb = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
 		Password: cfg.Password,

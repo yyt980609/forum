@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"forum/settings"
+	"forum/config"
 	"os"
 
 	"go.uber.org/zap"
@@ -12,7 +12,7 @@ import (
 var logger *zap.Logger
 
 // Init 初始化Logger
-func Init(cfg *settings.LogConfig) (err error) {
+func Init(cfg *config.LogConfig) (err error) {
 	writeSyncer := getLogWriter(cfg)
 	encoder := getEncoder()
 	var level = new(zapcore.Level)
@@ -30,7 +30,7 @@ func Init(cfg *settings.LogConfig) (err error) {
 
 // getEncoder 设置日志格式
 func getEncoder() zapcore.Encoder {
-	encoderConfig := zap.NewProductionEncoderConfig()
+	encoderConfig := zap.NewDevelopmentEncoderConfig()
 	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	encoderConfig.TimeKey = "time"
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
@@ -40,7 +40,7 @@ func getEncoder() zapcore.Encoder {
 }
 
 // 设置日志文件切割配置
-func getLogWriter(cfg *settings.LogConfig) zapcore.WriteSyncer {
+func getLogWriter(cfg *config.LogConfig) zapcore.WriteSyncer {
 	lumberJackLogger := &lumberjack.Logger{
 		Filename:   cfg.Filename,
 		MaxSize:    cfg.MaxSize,

@@ -2,13 +2,13 @@ package mysql
 
 import (
 	"fmt"
-	"forum/settings"
+	"forum/config"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-func Init(cfg *settings.MySQLConfig) (db *gorm.DB, err error) {
+func Init(cfg *config.MySQLConfig) (db *gorm.DB, err error) {
 	dsn := fmt.Sprintf("%s:%s@(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.User,
 		cfg.Password,
