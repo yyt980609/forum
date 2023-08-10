@@ -40,7 +40,6 @@ func GetID() (id uint64, err error) {
 		err = fmt.Errorf("snoy flake not inited")
 		return
 	}
-
 	id, err = sonyFlake.NextID()
 	return
 }

@@ -15,7 +15,7 @@ mysql:
   port: 3306
   user: root
   password: yUYANTAO
-  dbname: yyt
+  dbname: forum
 
 redis:
   host: 127.0.0.1

@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"forum/config"
 
+	"gorm.io/gorm/logger"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-func Init(cfg *config.MySQLConfig) (db *gorm.DB, err error) {
+var db *gorm.DB
+
+func Init(cfg *config.MySQLConfig) (err error) {
 	dsn := fmt.Sprintf("%s:%s@(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.User,
 		cfg.Password,
@@ -16,8 +20,13 @@ func Init(cfg *config.MySQLConfig) (db *gorm.DB, err error) {
 		cfg.Port,
 		cfg.DB,
 	)
-	db, err = gorm.Open(mysql.New(mysql.Config{
-		DriverName: "mysql",
-		DSN:        dsn}), &gorm.Config{})
-	return db, err
+	dialector := mysql.New(
+		mysql.Config{
+			DriverName: "mysql",
+			DSN:        dsn})
+	db, err = gorm.Open(dialector, &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
+	return err
+}
+func GetDB() *gorm.DB {
+	return db
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"forum/config"
+	"forum/controller"
 	"forum/router"
 	"forum/utils/logger"
 	"forum/utils/mysql"
@@ -29,7 +30,7 @@ func main() {
 		}
 	}(zap.L())
 	// mysql
-	if _, err := mysql.Init(config.Conf.MySQLConfig); err != nil {
+	if err := mysql.Init(config.Conf.MySQLConfig); err != nil {
 		zap.L().Error("Init mysql failed.", zap.String("err", err.Error()))
 	}
 	// redis
@@ -41,6 +42,11 @@ func main() {
 	if err := snowflake.Init(uint16(config.Conf.MachineID), config.Conf.StartTime); err != nil {
 		zap.L().Error("Init sony flake failed.", zap.String("err", err.Error()))
 	}
+	// 初始化gin框架内置校验器到翻译器
+	if err := controller.InitTrans("zh"); err != nil {
+		zap.L().Error("Init translator failed.", zap.String("err", err.Error()))
+	}
+
 	// 路由
 	r := router.SetUp()
 	err := r.Run(fmt.Sprintf(":%d", config.Conf.Port))

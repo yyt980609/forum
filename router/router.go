@@ -2,9 +2,8 @@ package router
 
 import (
 	"forum/controller"
-	"forum/utils/snowflake"
+	"forum/middleware"
 	"net/http"
-	"strconv"
 	"time"
 
 	ginzap "github.com/gin-contrib/zap"
@@ -15,14 +14,19 @@ import (
 )
 
 func SetUp() *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
-	r.Use(ginzap.Ginzap(zap.L(), time.RFC3339, true), ginzap.RecoveryWithZap(zap.L(), true))
-	r.GET("/", func(c *gin.Context) {
-		id, _ := snowflake.GetID()
-		c.String(http.StatusOK, "Ok"+strconv.Itoa(int(id)))
+	r.Use(ginzap.Ginzap(zap.L(), time.RFC3339, true),
+		ginzap.RecoveryWithZap(zap.L(), true),
+		middleware.GinI18nLocalize(),
+	)
+	r.GET("/1", func(c *gin.Context) {
+		controller.ResponseError(c, 1)
 	})
-	r.POST("/sign", controller.SignHandler)
-
+	// 注册
+	r.POST("/register", controller.RegisterHandler)
+	// 登陆
+	r.POST("/login", controller.LoginHandler)
 	// 404
 	r.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "404")
