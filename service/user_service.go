@@ -1,9 +1,9 @@
 package service
 
 import (
-	"errors"
 	"forum/dao"
 	"forum/models"
+	fError "forum/utils/error"
 	"forum/utils/md5"
 	"forum/utils/snowflake"
 
@@ -12,8 +12,8 @@ import (
 
 func Register(p *models.RegisterForm) (err error) {
 	u, err := dao.SelectUser(&models.User{Username: p.UserName})
-	if err != nil {
-		return errors.New("用户名已存在")
+	if err == nil {
+		return fError.New(fError.CodeUserExist)
 	}
 	id, e := snowflake.GetID()
 	if e != nil {
@@ -27,7 +27,7 @@ func Register(p *models.RegisterForm) (err error) {
 func Login(p *models.LoginForm) (err error) {
 	_, err = dao.SelectUser(&models.User{Username: p.UserName, Password: md5.EncryptPassword(p.Password)})
 	if err != nil {
-		return errors.New("用户不存在或密码错误")
+		return fError.New(fError.CodeUserNotExist)
 	}
 	return err
 }

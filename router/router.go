@@ -13,23 +13,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var Forum *gin.Engine
+
 func SetUp() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
-	r := gin.New()
-	r.Use(ginzap.Ginzap(zap.L(), time.RFC3339, true),
+	Forum = gin.New()
+	Forum.Use(ginzap.Ginzap(zap.L(), time.RFC3339, true),
 		ginzap.RecoveryWithZap(zap.L(), true),
 		middleware.GinI18nLocalize(),
 	)
-	r.GET("/1", func(c *gin.Context) {
-		controller.ResponseError(c, 1)
+	Forum.GET("/", func(c *gin.Context) {
+		controller.ResponseFailed(c, 1000)
 	})
 	// 注册
-	r.POST("/register", controller.RegisterHandler)
+	Forum.POST("/register", controller.RegisterHandler)
 	// 登陆
-	r.POST("/login", controller.LoginHandler)
+	Forum.POST("/login", controller.LoginHandler)
 	// 404
-	r.NoRoute(func(c *gin.Context) {
+	Forum.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "404")
 	})
-	return r
+	return Forum
 }

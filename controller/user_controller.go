@@ -4,6 +4,7 @@ import (
 	"errors"
 	"forum/models"
 	"forum/service"
+	"forum/utils/error"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -20,27 +21,29 @@ func RegisterHandler(c *gin.Context) {
 		zap.L().Error("Register with invalid param", zap.Error(err))
 		var errs validator.ValidationErrors
 		ok := errors.As(err, &errs)
-		if !ok {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"msg": "请求参数错误",
-			})
-			return
+		if ok {
+			ResponseFailedWithMsg(c, error.CodeInvalidPassword, removeTopStruct(errs.Translate(trans)))
+		} else {
+			ResponseFailed(c, error.CodeInvalidParam)
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"msg": removeTopStruct(errs.Translate(trans)),
-		})
 		return
 	}
 	err := service.Register(&p)
-	if err != nil {
+	var forumError *error.ForumError
+	if err == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"msg": "success",
+		})
+	} else if errors.As(err, &forumError) {
 		c.JSON(http.StatusOK, gin.H{
 			"msg": err.Error(),
 		})
-		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"msg": "err",
+		})
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "success",
-	})
+
 }
 
 func LoginHandler(c *gin.Context) {
@@ -49,15 +52,11 @@ func LoginHandler(c *gin.Context) {
 		zap.L().Error("Login with invalid param", zap.Error(err))
 		var errs validator.ValidationErrors
 		ok := errors.As(err, &errs)
-		if !ok {
-			c.JSON(http.StatusOK, gin.H{
-				"msg": err.Error(),
-			})
-			return
+		if ok {
+			ResponseFailedWithMsg(c, error.CodeInvalidPassword, removeTopStruct(errs.Translate(trans)))
+		} else {
+			ResponseFailed(c, error.CodeInvalidParam)
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"msg": removeTopStruct(errs.Translate(trans)),
-		})
 		return
 	}
 	err := service.Login(p)
