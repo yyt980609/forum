@@ -1,4 +1,4 @@
-package error
+package forum_error
 
 import "fmt"
 

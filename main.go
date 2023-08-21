@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 	"forum/config"
-	"forum/controller"
+	"forum/pkg/logger"
+	"forum/pkg/mysql"
+	"forum/pkg/redis"
+	"forum/pkg/snowflake"
+	"forum/pkg/validate"
 	"forum/router"
-	"forum/utils/logger"
-	"forum/utils/mysql"
-	"forum/utils/redis"
-	"forum/utils/snowflake"
 
 	"go.uber.org/zap"
 )
@@ -43,7 +43,7 @@ func main() {
 		zap.L().Error("Init sony flake failed.", zap.String("err", err.Error()))
 	}
 	// 初始化gin框架内置校验器到翻译器
-	if err := controller.InitTrans("zh"); err != nil {
+	if err := validate.InitTrans("zh"); err != nil {
 		zap.L().Error("Init translator failed.", zap.String("err", err.Error()))
 	}
 

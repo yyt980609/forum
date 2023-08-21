@@ -11,6 +11,7 @@ import (
 var rdb *redis.Client
 var ctx = context.Background()
 
+// Init 初始化Redis
 func Init(cfg *config.RedisConfig) (err error) {
 	rdb = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),

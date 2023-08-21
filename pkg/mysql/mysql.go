@@ -12,6 +12,7 @@ import (
 
 var db *gorm.DB
 
+// Init 初始化Gorm
 func Init(cfg *config.MySQLConfig) (err error) {
 	dsn := fmt.Sprintf("%s:%s@(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.User,

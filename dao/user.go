@@ -2,8 +2,8 @@ package dao
 
 import (
 	"forum/models"
-	"forum/utils/md5"
-	"forum/utils/mysql"
+	"forum/pkg/md5"
+	"forum/pkg/mysql"
 
 	"go.uber.org/zap"
 )
@@ -22,9 +22,10 @@ func InsertUser(user *models.User) (err error) {
 	}
 }
 
+// SelectUser 查询用户信息
 func SelectUser(p *models.User) (r *models.User, err error) {
 	db := mysql.GetDB()
-	result := db.Table("user").Where("username = ?", p.Username).First(&r)
+	result := db.Table("user").Where(p).First(&r)
 	err = result.Error
 	return
 }

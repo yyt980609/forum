@@ -2,10 +2,11 @@ package controller
 
 import (
 	"errors"
+	"forum/common"
 	"forum/models"
+	"forum/pkg/validate"
 	"forum/service"
-	"forum/utils/error"
-	"net/http"
+	"forum/utils/forum_error"
 
 	"github.com/go-playground/validator/v10"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// RegisterHandler 注册处理函数
 func RegisterHandler(c *gin.Context) {
 	// 参数校验
 	var p models.RegisterForm
@@ -22,30 +24,17 @@ func RegisterHandler(c *gin.Context) {
 		var errs validator.ValidationErrors
 		ok := errors.As(err, &errs)
 		if ok {
-			ResponseFailedWithMsg(c, error.CodeInvalidPassword, removeTopStruct(errs.Translate(trans)))
+			ResponseFailedWithMsg(c, forum_error.CodeInvalidPassword, validate.RemoveTopStruct(errs.Translate(validate.Trans)))
 		} else {
-			ResponseFailed(c, error.CodeInvalidParam)
+			ResponseFailed(c, forum_error.CodeInvalidParam)
 		}
 		return
 	}
 	err := service.Register(&p)
-	var forumError *error.ForumError
-	if err == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"msg": "success",
-		})
-	} else if errors.As(err, &forumError) {
-		c.JSON(http.StatusOK, gin.H{
-			"msg": err.Error(),
-		})
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"msg": "err",
-		})
-	}
-
+	BuildFailedResponse(c, nil, err)
 }
 
+// LoginHandler 登陆处理函数
 func LoginHandler(c *gin.Context) {
 	p := new(models.LoginForm)
 	if err := c.ShouldBindJSON(&p); err != nil {
@@ -53,20 +42,15 @@ func LoginHandler(c *gin.Context) {
 		var errs validator.ValidationErrors
 		ok := errors.As(err, &errs)
 		if ok {
-			ResponseFailedWithMsg(c, error.CodeInvalidPassword, removeTopStruct(errs.Translate(trans)))
+			ResponseFailedWithMsg(c, forum_error.CodeInvalidPassword, validate.RemoveTopStruct(errs.Translate(validate.Trans)))
 		} else {
-			ResponseFailed(c, error.CodeInvalidParam)
+			ResponseFailed(c, forum_error.CodeInvalidParam)
 		}
 		return
 	}
-	err := service.Login(p)
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"msg": err.Error(),
-		})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "success",
-	})
+	aToken, rToken, err := service.Login(p)
+	token := make(map[string]string)
+	token[common.AToken] = aToken
+	token[common.RToken] = rToken
+	BuildFailedResponse(c, token, err)
 }

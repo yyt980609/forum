@@ -7,8 +7,10 @@ import (
 
 const secret = "Kassadin"
 
+// EncryptPassword 加密密码
 func EncryptPassword(password string) string {
 	h := md5.New()
 	h.Write([]byte(secret))
-	return hex.EncodeToString(h.Sum([]byte(password)))
+	h.Write([]byte(password))
+	return hex.EncodeToString(h.Sum([]byte(nil)))
 }

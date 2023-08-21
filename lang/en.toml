@@ -1,1 +1,9 @@
-1000="The system is abnormal. Contact the administrator。"
+1000="The system is abnormal, contact the administrator"
+1001="Please login first"
+
+
+2000="The business is abnormal, contact the administrator"
+2001="Request parameter exception"
+2002="The user already exists"
+2003="The user does not exist"
+2004="The password is incorrect"
