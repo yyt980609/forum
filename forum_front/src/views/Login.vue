@@ -43,7 +43,7 @@ export default {
 				})
 			}).then((res)=>{
 				console.log(res.data)
-				if (res.code == 1000) {
+				if (res.code === 1000) {
           localStorage.setItem("loginResult", JSON.stringify(res.data));
           this.$store.commit("login", res.data);
           this.$router.push({path: this.redirect || '/' })
