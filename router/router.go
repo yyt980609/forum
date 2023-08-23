@@ -13,27 +13,32 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var Forum *gin.Engine
-
 // SetUp 启动项目
 func SetUp() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
-	Forum = gin.New()
-	Forum.Use(ginzap.Ginzap(zap.L(), time.RFC3339, true),
+	forum := gin.New()
+	forum.Use(ginzap.Ginzap(zap.L(), time.RFC3339, true),
 		ginzap.RecoveryWithZap(zap.L(), true),
 		middleware.GinI18nLocalize(),
-		middleware.JWTAuthMiddleware(),
 	)
-	Forum.GET("/", middleware.JWTAuthMiddleware(), func(c *gin.Context) {
+	v1 := forum.Group("/api/v1")
+	// v1.Use(middleware.JWTAuthMiddleware())
+	// 主页
+	v1.GET("/", middleware.JWTAuthMiddleware(), func(c *gin.Context) {
 		controller.ResponseSuccess(c, "Success")
 	})
 	// 注册
-	Forum.POST("/register", controller.RegisterHandler)
+	v1.POST("/register", controller.RegisterHandler)
 	// 登陆
-	Forum.POST("/login", controller.LoginHandler)
+	v1.POST("/login", controller.LoginHandler)
+	{
+		v1.GET("/community", controller.CommunityHandler)
+
+	}
+
 	// 404
-	Forum.NoRoute(func(c *gin.Context) {
+	forum.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "404")
 	})
-	return Forum
+	return forum
 }

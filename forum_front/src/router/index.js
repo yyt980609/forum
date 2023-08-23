@@ -4,7 +4,7 @@ import Home from '../views/Home.vue'
 import Content from '../views/Content.vue'
 import Publish from '../views/Publish.vue'
 import Login from '../views/Login.vue'
-import SignUp from '../views/SignUp.vue'
+import Register from '../views/Register.vue'
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err);
@@ -34,9 +34,9 @@ Vue.use(VueRouter)
     component: Login
   },
   {
-    path: '/signup',
-    name:"SignUp",
-    component: SignUp
+    path: '/Register',
+    name:"Register",
+    component: Register
   }
 ]
 

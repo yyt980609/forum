@@ -20,6 +20,7 @@ const (
 	CodeUserNotExist
 	CodeInvalidPassword
 	CodeUserNotLogin
+	CodeNoData
 )
 
 // GetMsg 解析错误信息

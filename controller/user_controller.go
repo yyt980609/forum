@@ -31,7 +31,7 @@ func RegisterHandler(c *gin.Context) {
 		return
 	}
 	err := service.Register(&p)
-	BuildFailedResponse(c, nil, err)
+	BuildResponse(c, nil, err)
 }
 
 // LoginHandler 登陆处理函数
@@ -52,5 +52,5 @@ func LoginHandler(c *gin.Context) {
 	token := make(map[string]string)
 	token[common.AToken] = aToken
 	token[common.RToken] = rToken
-	BuildFailedResponse(c, token, err)
+	BuildResponse(c, token, err)
 }

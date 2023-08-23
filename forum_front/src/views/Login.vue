@@ -42,16 +42,15 @@ export default {
 					password: this.password
 				})
 			}).then((res)=>{
-				console.log(res.data)
-				if (res.code === 1000) {
+				if (res.status === 1) {
           localStorage.setItem("loginResult", JSON.stringify(res.data));
           this.$store.commit("login", res.data);
           this.$router.push({path: this.redirect || '/' })
 				} else {
-					console.log(res.msg)
+          this.$message.error(res.msg);
 				}
 			}).catch((error)=>{
-				console.log(error)
+				console.log("error" + error)
 			})
 		}
 	}

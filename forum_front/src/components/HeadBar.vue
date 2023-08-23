@@ -8,7 +8,7 @@
     <div class="btns">
       <div v-show="!isLogin">
         <a class="login-btn" @click="goLogin">登录</a>
-        <a class="login-btn" @click="goSignUp">注册</a>
+        <a class="login-btn" @click="goRegister">注册</a>
       </div>
       <div class="user-box" v-show="isLogin">
         <span class="user">{{ currUsername }}</span>
@@ -42,8 +42,8 @@ export default {
     goLogin() {
       this.$router.push({ name: "Login" });
     },
-    goSignUp() {
-      this.$router.push({ name: "SignUp" });
+    goRegister() {
+      this.$router.push({ name: "Register" });
     },
     goLogout(){
       this.$store.commit("logout");

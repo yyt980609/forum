@@ -48,8 +48,8 @@ func ResponseSuccess(c *gin.Context, data interface{}) {
 	c.JSON(http.StatusOK, r)
 }
 
-// BuildFailedResponse 组装失败响应
-func BuildFailedResponse(c *gin.Context, data interface{}, err error) {
+// BuildResponse 组装失败响应
+func BuildResponse(c *gin.Context, data interface{}, err error) {
 	var forumError *fError.ForumError
 	if err == nil {
 		ResponseSuccess(c, data)
