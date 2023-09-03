@@ -7,3 +7,6 @@
 2002="The user already exists"
 2003="The user does not exist"
 2004="The password is incorrect"
+2005="User not logged in"
+2006="Data does not exist"
+2007="Voting time is over"

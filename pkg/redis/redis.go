@@ -26,3 +26,11 @@ func Init(cfg *config.RedisConfig) (err error) {
 func Close() {
 	_ = rdb.Close()
 }
+
+func GetRedis() *redis.Client {
+	return rdb
+}
+
+func GetContext() context.Context {
+	return ctx
+}

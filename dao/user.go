@@ -29,3 +29,11 @@ func SelectUser(p *models.User) (r *models.User, err error) {
 	err = result.Error
 	return
 }
+
+// SelectUserById 查询用户信息
+func SelectUserById(id int64) (r *models.User, err error) {
+	db := mysql.GetDB()
+	result := db.Table("user").Where("user_id = ?", id).First(&r)
+	err = result.Error
+	return
+}

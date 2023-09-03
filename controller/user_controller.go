@@ -2,7 +2,6 @@ package controller
 
 import (
 	"errors"
-	"forum/common"
 	"forum/models"
 	"forum/pkg/validate"
 	"forum/service"
@@ -21,13 +20,7 @@ func RegisterHandler(c *gin.Context) {
 	var p models.RegisterForm
 	if err := c.ShouldBindJSON(&p); err != nil {
 		zap.L().Error("Register with invalid param", zap.Error(err))
-		var errs validator.ValidationErrors
-		ok := errors.As(err, &errs)
-		if ok {
-			ResponseFailedWithMsg(c, forum_error.CodeInvalidPassword, validate.RemoveTopStruct(errs.Translate(validate.Trans)))
-		} else {
-			ResponseFailed(c, forum_error.CodeInvalidParam)
-		}
+		ParamValidFailedResponse(c, err)
 		return
 	}
 	err := service.Register(&p)
@@ -42,15 +35,12 @@ func LoginHandler(c *gin.Context) {
 		var errs validator.ValidationErrors
 		ok := errors.As(err, &errs)
 		if ok {
-			ResponseFailedWithMsg(c, forum_error.CodeInvalidPassword, validate.RemoveTopStruct(errs.Translate(validate.Trans)))
+			ResponseFailedWithMsg(c, forum_error.CodeInvalidParam, validate.RemoveTopStruct(errs.Translate(validate.Trans)))
 		} else {
-			ResponseFailed(c, forum_error.CodeInvalidParam)
+			ResponseFailed(c, forum_error.CodeSystemError)
 		}
 		return
 	}
-	aToken, rToken, err := service.Login(p)
-	token := make(map[string]string)
-	token[common.AToken] = aToken
-	token[common.RToken] = rToken
-	BuildResponse(c, token, err)
+	user, err := service.Login(p)
+	BuildResponse(c, user, err)
 }

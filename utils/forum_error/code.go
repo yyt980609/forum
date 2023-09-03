@@ -21,6 +21,7 @@ const (
 	CodeInvalidPassword
 	CodeUserNotLogin
 	CodeNoData
+	CodeCanNotVote
 )
 
 // GetMsg 解析错误信息

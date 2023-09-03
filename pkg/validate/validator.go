@@ -3,7 +3,6 @@ package validate
 import (
 	"fmt"
 	"reflect"
-	"strings"
 
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/en"
@@ -24,7 +23,7 @@ func InitTrans(locale string) (err error) {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		// 注册一个获取json tag的自定义方法
 		v.RegisterTagNameFunc(func(fld reflect.StructField) string {
-			name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+			name := fld.Tag.Get("zh")
 			if name == "-" {
 				return ""
 			}
@@ -61,10 +60,12 @@ func InitTrans(locale string) (err error) {
 }
 
 // RemoveTopStruct 去除前缀
-func RemoveTopStruct(fields map[string]string) map[string]string {
-	res := map[string]string{}
-	for field, err := range fields {
-		res[field[strings.Index(field, ".")+1:]] = err
+func RemoveTopStruct(fields map[string]string) string {
+	// 只取第一个错误信息
+	var res string
+	for _, err := range fields {
+		res = err
+		break
 	}
 	return res
 }

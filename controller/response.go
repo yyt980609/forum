@@ -2,8 +2,11 @@ package controller
 
 import (
 	"errors"
+	"forum/pkg/validate"
 	fError "forum/utils/forum_error"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +20,7 @@ type Response struct {
 	Status int         `json:"status"`
 	Code   int         `json:"code"`
 	Msg    interface{} `json:"msg"`
-	Data   interface{} `json:"data"`
+	Data   interface{} `json:"data,omitempty"`
 }
 
 // ResponseFailed 失败响应
@@ -55,6 +58,17 @@ func BuildResponse(c *gin.Context, data interface{}, err error) {
 		ResponseSuccess(c, data)
 	} else if errors.As(err, &forumError) {
 		ResponseFailed(c, forumError.Code)
+	} else {
+		ResponseFailed(c, fError.CodeSystemError)
+	}
+}
+
+// ParamValidFailedResponse 参数校验
+func ParamValidFailedResponse(c *gin.Context, err error) {
+	var errs validator.ValidationErrors
+	ok := errors.As(err, &errs)
+	if ok {
+		ResponseFailedWithMsg(c, fError.CodeInvalidParam, validate.RemoveTopStruct(errs.Translate(validate.Trans)))
 	} else {
 		ResponseFailed(c, fError.CodeSystemError)
 	}

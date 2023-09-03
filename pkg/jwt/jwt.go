@@ -11,7 +11,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-const aTokenExpireDuration = time.Hour * 2
+const aTokenExpireDuration = time.Hour * 24830
 const rTokenExpireDuration = time.Hour * 24 * 30
 
 var secret = []byte("Kassadin")

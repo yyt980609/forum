@@ -27,11 +27,18 @@ func Register(p *models.RegisterForm) (err error) {
 }
 
 // Login 登陆逻辑
-func Login(p *models.LoginForm) (aToken, rToken string, err error) {
-	user, err := dao.SelectUser(&models.User{Username: p.Username, Password: md5.EncryptPassword(p.Password)})
+func Login(p *models.LoginForm) (user *models.User, err error) {
+	user, err = dao.SelectUser(&models.User{Username: p.Username, Password: md5.EncryptPassword(p.Password)})
 	if err != nil {
-		return "", "", fError.New(fError.CodeUserNotExist)
+		return nil, fError.New(fError.CodeUserNotExist)
 	}
 	// 生成JwtToken
-	return jwt.GenToken(user.UserID, user.Username)
+	aToken, rToken, err := jwt.GenToken(user.UserID, user.Username)
+	if err != nil {
+		return nil, fError.New(fError.CodeSystemError)
+	}
+	user.AccessToken = aToken
+	user.RefreshToken = rToken
+	user.Password = ""
+	return
 }
